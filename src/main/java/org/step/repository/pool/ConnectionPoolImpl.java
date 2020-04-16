@@ -1,13 +1,16 @@
 package org.step.repository.pool;
 
-import org.postgresql.core.TransactionState;
-
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.Savepoint;
 import java.util.Optional;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ConnectionPoolImpl implements ConnectionPool {
 
@@ -19,24 +22,6 @@ public class ConnectionPoolImpl implements ConnectionPool {
     private final int poolSize = 5;
 
     private ConnectionPoolImpl() {
-        DataBaseResourceManager dataBaseResourceManager = DataBaseResourceManager.getInstance();
-
-        String url = dataBaseResourceManager.getDataBaseBundleValueByKey(DataBaseProperties.DATA_BASE_URL);
-        String user = dataBaseResourceManager.getDataBaseBundleValueByKey(DataBaseProperties.DATA_BASE_USER);
-        String password = dataBaseResourceManager.getDataBaseBundleValueByKey(DataBaseProperties.DATA_BASE_PASSWORD);
-        String driver = dataBaseResourceManager.getDataBaseBundleValueByKey(DataBaseProperties.DATA_BASE_DRIVER);
-
-        try {
-            Class.forName(driver);
-            connection = DriverManager.getConnection(url, user, password);
-            connectionsQueue = new ArrayBlockingQueue<>(poolSize);
-            for (int i = 0; i < poolSize; i++) {
-                connection.setAutoCommit(false);
-                connectionsQueue.add(connection);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public static ConnectionPool getInstance() {
@@ -49,6 +34,7 @@ public class ConnectionPoolImpl implements ConnectionPool {
                 }
             }
         }
+        localInstance.init();
         return localInstance;
     }
 
@@ -122,6 +108,35 @@ public class ConnectionPoolImpl implements ConnectionPool {
         try {
             checkConnectionIsNotNull(connection);
             connection.rollback(savepoint);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void init() {
+        DataBaseResourceManager dataBaseResourceManager = DataBaseResourceManager.getInstance();
+
+        String url = dataBaseResourceManager.getDataBaseBundleValueByKey(DataBaseProperties.DATA_BASE_URL);
+        String user = dataBaseResourceManager.getDataBaseBundleValueByKey(DataBaseProperties.DATA_BASE_USER);
+        String password = dataBaseResourceManager.getDataBaseBundleValueByKey(DataBaseProperties.DATA_BASE_PASSWORD);
+        String driver = dataBaseResourceManager.getDataBaseBundleValueByKey(DataBaseProperties.DATA_BASE_DRIVER);
+
+        try {
+            if (!url.contains("memory")) {
+                Class.forName(driver);
+                connection = DriverManager.getConnection(url, user, password);
+            } else {
+                connection = DriverManager.getConnection(url);
+                Stream<String> lines = Files.lines(Paths.get("src/main/resources/db.creator.sql"));
+                String collect = lines.collect(Collectors.joining());
+                PreparedStatement preparedStatement = connection.prepareStatement(collect);
+                preparedStatement.executeUpdate();
+            }
+            connectionsQueue = new ArrayBlockingQueue<>(poolSize);
+            for (int i = 0; i < poolSize; i++) {
+                connection.setAutoCommit(false);
+                connectionsQueue.add(connection);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

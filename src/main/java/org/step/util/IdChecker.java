@@ -10,7 +10,7 @@ public class IdChecker {
 
     private static final String ID_CHECKER = "select user_id from users";
     private static final String USER_ID_FIELD = "user_id";
-    private static final long ID_START = 1L;
+    private static final long ID_START = 0;
 
     public static Long getNextId(Connection connection) throws Exception {
         List<Long> idList = new ArrayList<>();

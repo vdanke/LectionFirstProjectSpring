@@ -5,21 +5,25 @@ import org.step.repository.UserRepository;
 import org.step.service.UserService;
 
 import java.util.List;
+import java.util.Random;
 
 public class UserServiceImpl implements UserService<User> {
 
     private UserRepository<User> userRepository;
+    private Random random;
 
-    public UserServiceImpl(UserRepository<User> userRepository) {
+    public UserServiceImpl(UserRepository<User> userRepository, Random random) {
         this.userRepository = userRepository;
+        this.random = random;
     }
 
     @Override
     public boolean save(User user) {
+        int i = random.nextInt(1000);
         if (user == null) {
             throw new IllegalArgumentException("User is null");
         }
-        user.setPassword(user.getPassword() + "shifr");
+        user.setPassword(user.getPassword() + "shifr" + i);
 
         return userRepository.save(user);
     }

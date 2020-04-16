@@ -1,18 +1,25 @@
 package org.step.repository;
 
 import org.junit.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.junit.runners.MethodSorters;
 import org.step.model.User;
 import org.step.repository.impl.UserRepositoryImpl;
 
 import java.util.List;
 
+@RunWith(JUnit4.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserRepositoryImplIT {
 
-    private UserRepository<User> userRepository;
+    private static UserRepository<User> userRepository;
+    private static List<User> userList;
 
-    @Before
-    public void setup() {
+    @BeforeClass
+    public static void setup() {
         userRepository = new UserRepositoryImpl();
+        userList = userRepository.findAll();
     }
 
     @Test
@@ -26,34 +33,33 @@ public class UserRepositoryImplIT {
         });
 
         Assert.assertTrue(all.contains(new User(1L, "first", "first")));
-        Assert.assertEquals(3, all.size());
+        Assert.assertEquals(userList.size(), all.size());
     }
 
     @Test
     public void shouldSaveUserToDatabase() {
-        User user = new User("fourth", "fourth");
+        User user = new User("second", "second");
 
         boolean isSaved = userRepository.save(user);
-        final int sizeAfterSaving = 4;
 
         List<User> all = userRepository.findAll();
 
-        user = new User(4L, "fourth", "fourth");
+        user.setId(2L);
 
         Assert.assertTrue(isSaved);
-        Assert.assertEquals(sizeAfterSaving, all.size());
+        Assert.assertEquals(userList.size() + 1, all.size());
         Assert.assertTrue(all.contains(user));
     }
 
-    @After
-    public void afterClass() {
-        User user = new User(4L, "fourth", "fourth");
+    @AfterClass
+    public static void afterClass() {
+        User user = new User(2L, "second", "second");
 
         userRepository.delete(user);
 
         List<User> all = userRepository.findAll();
 
-        Assert.assertEquals(3, all.size());
+        Assert.assertEquals(userList.size(), all.size());
         Assert.assertFalse(all.contains(user));
     }
 }

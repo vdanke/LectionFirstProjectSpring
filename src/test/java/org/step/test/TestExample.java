@@ -15,17 +15,20 @@ import org.step.service.impl.UserServiceImpl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestExample {
 
     private UserService<User> userService;
     private UserRepository<User> userRepository;
+    private Random random;
 
     @Before
     public void setup() {
+        random = Mockito.mock(Random.class);
         userRepository = Mockito.mock(UserRepositoryImpl.class);
-        userService = new UserServiceImpl(userRepository);
+        userService = new UserServiceImpl(userRepository, random);
     }
 
     @Test
