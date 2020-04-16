@@ -64,4 +64,28 @@ public class UserServiceImplTestSecond {
                 .startsWith("sec")
                 .endsWith("shifr5");
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowException() {
+        // Инициализируем тестовые данные
+        final int passwordInteger = 5;
+
+        // Задаем поведение Mock объектов
+        Mockito.when(random.nextInt(Mockito.anyInt()))
+                .thenReturn(passwordInteger);
+
+        // Вызываем реальный метод
+        boolean isSaved = userService.save(null);
+
+        // Проверяем сколько раз был вызыван метод у Mock объекта
+        Mockito.verifyZeroInteractions(userRepository);
+        Mockito.verify(random, Mockito.times(1))
+                .nextInt(Mockito.anyInt());
+
+        // Проверяем полученные данные в методе (тестируем логику)
+        Assertions.assertThat(isSaved).isFalse();
+        Assertions.assertThatThrownBy(() -> {
+            throw new IllegalArgumentException("User is null");
+        }).hasMessage("User is null");
+    }
 }
