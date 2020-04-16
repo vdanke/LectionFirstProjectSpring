@@ -26,9 +26,6 @@ public class IdChecker {
                 .max()
                 .orElse(ID_START);
 
-        if (maxId == ID_START) {
-            return maxId;
-        }
         return ++maxId;
     }
 }

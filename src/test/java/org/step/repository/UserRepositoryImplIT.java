@@ -15,10 +15,14 @@ public class UserRepositoryImplIT {
 
     private static UserRepository<User> userRepository;
     private static List<User> userList;
+    private static User user;
 
     @BeforeClass
     public static void setup() {
         userRepository = new UserRepositoryImpl();
+        user = new User("first", "first");
+        userRepository.save(user);
+        user.setId(1L);
         userList = userRepository.findAll();
     }
 
@@ -32,7 +36,7 @@ public class UserRepositoryImplIT {
             System.out.println(user.getPassword());
         });
 
-        Assert.assertTrue(all.contains(new User(1L, "first", "first")));
+        Assert.assertTrue(all.contains(user));
         Assert.assertEquals(userList.size(), all.size());
     }
 
@@ -53,13 +57,16 @@ public class UserRepositoryImplIT {
 
     @AfterClass
     public static void afterClass() {
-        User user = new User(2L, "second", "second");
+        User fromSaveTest = new User(2L, "second", "second");
 
+        userRepository.delete(fromSaveTest);
         userRepository.delete(user);
+
+        userList.remove(user);
 
         List<User> all = userRepository.findAll();
 
         Assert.assertEquals(userList.size(), all.size());
-        Assert.assertFalse(all.contains(user));
+        Assert.assertFalse(all.contains(fromSaveTest));
     }
 }
