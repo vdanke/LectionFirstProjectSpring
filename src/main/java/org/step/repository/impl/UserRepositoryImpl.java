@@ -18,6 +18,10 @@ public class UserRepositoryImpl implements UserRepository<User> {
     private static final String FIND_BY_ID = "select * from users where user_id=?";
     private static final String DELETE = "delete from users where user_id=?";
 
+    private static final String USER_ID = "user_id";
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+
     private ConnectionPool connectionPool = ConnectionPoolImpl.getInstance();
 
     @Override
@@ -74,9 +78,9 @@ public class UserRepositoryImpl implements UserRepository<User> {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                long user_id = resultSet.getLong("user_id");
-                String username = resultSet.getString("username");
-                String password = resultSet.getString("password");
+                long user_id = resultSet.getLong(USER_ID);
+                String username = resultSet.getString(USERNAME);
+                String password = resultSet.getString(PASSWORD);
                 user = new User(user_id, username, password);
                 return Optional.of(user);
             }
@@ -100,7 +104,7 @@ public class UserRepositoryImpl implements UserRepository<User> {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Optional<Savepoint> optionalSavepoint = connectionPool.setSavepoint(
-                        connection, "savePoint" + resultSet.getLong("user_id")
+                        connection, "savePoint" + resultSet.getLong(USER_ID)
                 );
                 if (optionalSavepoint.isPresent()) {
                     savepoint = optionalSavepoint.get();
@@ -122,15 +126,11 @@ public class UserRepositoryImpl implements UserRepository<User> {
     }
 
     private User setUserFromDatabase(ResultSet resultSet) throws Exception {
-        final String userId = "user_id";
-        final String username = "username";
-        final String password = "password";
-
         User user = new User();
 
-        user.setId(resultSet.getLong(userId));
-        user.setUsername(resultSet.getString(username));
-        user.setPassword(resultSet.getString(password));
+        user.setId(resultSet.getLong(USER_ID));
+        user.setUsername(resultSet.getString(USERNAME));
+        user.setPassword(resultSet.getString(PASSWORD));
 
         return user;
     }
