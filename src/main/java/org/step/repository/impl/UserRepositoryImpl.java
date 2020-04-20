@@ -22,7 +22,7 @@ public class UserRepositoryImpl implements UserRepository<User> {
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
 
-    private ConnectionPool connectionPool = ConnectionPoolImpl.getInstance();
+    private final ConnectionPool connectionPool = ConnectionPoolImpl.getInstance();
 
     @Override
     public boolean save(User user) {
