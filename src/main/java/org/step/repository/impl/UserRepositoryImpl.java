@@ -15,6 +15,7 @@ public class UserRepositoryImpl implements UserRepository<User> {
 
     private static final String REGISTRATION = "insert into users(user_id,username,password) values(?,?,?)";
     private static final String FIND_ALL = "select * from users";
+    private static final String FIND_BY_ID = "select * from users where user_id=?";
     private static final String DELETE = "delete from users where user_id=?";
 
     private ConnectionPool connectionPool = ConnectionPoolImpl.getInstance();
@@ -65,6 +66,26 @@ public class UserRepositoryImpl implements UserRepository<User> {
 
     @Override
     public Optional<User> findById(Long id) {
+        Connection connection = connectionPool.getConnection();
+        User user;
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID);
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                long user_id = resultSet.getLong("user_id");
+                String username = resultSet.getString("username");
+                String password = resultSet.getString("password");
+                user = new User(user_id, username, password);
+                return Optional.of(user);
+            }
+        } catch (Exception e) {
+            connectionPool.rollbackTransaction(connection);
+            e.printStackTrace();
+        } finally {
+            connectionPool.releaseConnection(connection);
+        }
         return Optional.empty();
     }
 
@@ -101,11 +122,15 @@ public class UserRepositoryImpl implements UserRepository<User> {
     }
 
     private User setUserFromDatabase(ResultSet resultSet) throws Exception {
+        final String userId = "user_id";
+        final String username = "username";
+        final String password = "password";
+
         User user = new User();
 
-        user.setId(resultSet.getLong("user_id"));
-        user.setUsername(resultSet.getString("username"));
-        user.setPassword(resultSet.getString("password"));
+        user.setId(resultSet.getLong(userId));
+        user.setUsername(resultSet.getString(username));
+        user.setPassword(resultSet.getString(password));
 
         return user;
     }
