@@ -26,7 +26,9 @@ public class UserServiceImpl implements UserService<User>, AuthoritiesService<Us
 
     @Override
     public boolean save(User user) {
-        int i = random.nextInt(1000);
+        final int thousand = 1000;
+        int i = random.nextInt(thousand);
+
         if (user == null) {
             throw new IllegalArgumentException("User is null");
         }
