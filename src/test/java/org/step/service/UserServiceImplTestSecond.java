@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.step.model.User;
+import org.step.repository.AuthoritiesRepository;
 import org.step.repository.UserRepository;
 import org.step.service.impl.UserServiceImpl;
 
@@ -20,6 +21,8 @@ public class UserServiceImplTestSecond {
     private Random random;
     @Mock
     private UserRepository<User> userRepository;
+    @Mock
+    private AuthoritiesRepository<User> authoritiesRepository;
     @InjectMocks
     private UserService<User> userService;
 
@@ -31,14 +34,14 @@ public class UserServiceImplTestSecond {
         userRepository = Mockito.init(UserRepositoryImpl.class);
         userService = new UserServiceImpl(userRepository);
          */
-        userService = new UserServiceImpl(userRepository, random);
+        userService = new UserServiceImpl(userRepository, authoritiesRepository, random);
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
     public void shouldSaveUserToDatabase() {
         // Инициализируем тестовые данные
-        User user = new User("second", "second");
+        User user = new User(2L, "second", "second");
 
         final int passwordInteger = 5;
 
@@ -46,7 +49,7 @@ public class UserServiceImplTestSecond {
         Mockito.when(random.nextInt(Mockito.anyInt()))
                 .thenReturn(passwordInteger);
         Mockito.when(userRepository.save(user))
-                .thenReturn(true);
+                .thenReturn(user);
 
         // Вызываем реальный метод
         boolean save = userService.save(user);

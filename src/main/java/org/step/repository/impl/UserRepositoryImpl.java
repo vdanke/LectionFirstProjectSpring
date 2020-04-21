@@ -1,6 +1,7 @@
 package org.step.repository.impl;
 
 import org.step.model.User;
+import org.step.repository.AuthoritiesRepository;
 import org.step.repository.UserRepository;
 import org.step.repository.pool.ConnectionPool;
 import org.step.repository.pool.ConnectionPoolImpl;
@@ -11,12 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserRepositoryImpl implements UserRepository<User> {
+public class UserRepositoryImpl implements UserRepository<User>, AuthoritiesRepository<User> {
 
     private static final String REGISTRATION = "insert into users(user_id,username,password) values(?,?,?)";
     private static final String FIND_ALL = "select * from users";
     private static final String FIND_BY_ID = "select * from users where user_id=?";
     private static final String DELETE = "delete from users where user_id=?";
+    private static final String UPDATE = "update users set username=?, password=? where user_id=?";
+    private static final String UPDATE_ROLE = "insert into authorities(user_id,authorities) values(?,?)";
 
     private static final String USER_ID = "user_id";
     private static final String USERNAME = "username";
@@ -25,26 +28,31 @@ public class UserRepositoryImpl implements UserRepository<User> {
     private final ConnectionPool connectionPool = ConnectionPoolImpl.getInstance();
 
     @Override
-    public boolean save(User user) {
+    public User save(User user) {
         Connection connection = connectionPool.getConnection();
+        Long nextId;
 
         try {
+            nextId = IdChecker.getNextId(connection);
+
             PreparedStatement preparedStatement = connection.prepareStatement(REGISTRATION);
-            preparedStatement.setLong(1, IdChecker.getNextId(connection));
+            preparedStatement.setLong(1, nextId);
             preparedStatement.setString(2, user.getUsername());
             preparedStatement.setString(3, user.getPassword());
             int i = preparedStatement.executeUpdate();
             if (i != -1) {
                 connectionPool.commitTransaction(connection);
             }
-            return true;
+            user.setId(nextId);
+
+            return user;
         } catch (Exception e) {
             connectionPool.rollbackTransaction(connection);
             e.printStackTrace();
         } finally {
             connectionPool.releaseConnection(connection);
         }
-        return false;
+        return user;
     }
 
     @Override
@@ -122,7 +130,47 @@ public class UserRepositoryImpl implements UserRepository<User> {
 
     @Override
     public User update(User user) {
+        Connection connection = connectionPool.getConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
+            preparedStatement.setString(1, user.getUsername());
+            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setLong(3, user.getId());
+            int i = preparedStatement.executeUpdate();
+            if (i != -1) {
+                connectionPool.commitTransaction(connection);
+            }
+            return user;
+        } catch (Exception e) {
+            connectionPool.rollbackTransaction(connection);
+            e.printStackTrace();
+        } finally {
+            connectionPool.releaseConnection(connection);
+        }
         return null;
+    }
+
+    @Override
+    public boolean saveAuthorities(User user) {
+        Connection connection = connectionPool.getConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_ROLE);
+            preparedStatement.setLong(1, user.getId());
+            preparedStatement.setString(2, user.getRole().name());
+            int i = preparedStatement.executeUpdate();
+            if (i != -1) {
+                connectionPool.commitTransaction(connection);
+            }
+            return true;
+        } catch (Exception e) {
+            connectionPool.rollbackTransaction(connection);
+            e.printStackTrace();
+        } finally {
+            connectionPool.releaseConnection(connection);
+        }
+        return false;
     }
 
     private User setUserFromDatabase(ResultSet resultSet) throws Exception {

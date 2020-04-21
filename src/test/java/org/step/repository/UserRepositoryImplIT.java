@@ -44,13 +44,13 @@ public class UserRepositoryImplIT {
     public void shouldSaveUserToDatabase() {
         User user = new User("second", "second");
 
-        boolean isSaved = userRepository.save(user);
+        User afterSaving = userRepository.save(user);
 
         List<User> all = userRepository.findAll();
 
         user.setId(2L);
 
-        Assert.assertTrue(isSaved);
+        Assert.assertNotNull(afterSaving);
         Assert.assertEquals(userList.size() + 1, all.size());
         Assert.assertTrue(all.contains(user));
     }

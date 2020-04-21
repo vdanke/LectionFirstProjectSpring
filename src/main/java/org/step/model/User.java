@@ -1,5 +1,7 @@
 package org.step.model;
 
+import org.step.security.Role;
+
 import java.util.Objects;
 
 public class User {
@@ -7,6 +9,7 @@ public class User {
     private Long id;
     private String username;
     private String password;
+    private Role role;
 
     public User() {
     }
@@ -20,6 +23,20 @@ public class User {
         this.id = id;
         this.username = username;
         this.password = password;
+    }
+
+    public User(String username, String password, Role role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public Long getId() {

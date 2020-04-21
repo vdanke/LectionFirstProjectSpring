@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface UserRepository<T extends User> {
 
-    boolean save(T user);
+    T save(T user);
 
     boolean delete(T user);
 

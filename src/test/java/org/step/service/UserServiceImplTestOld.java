@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.step.model.User;
+import org.step.repository.AuthoritiesRepository;
 import org.step.repository.UserRepository;
 import org.step.service.impl.UserServiceImpl;
 
@@ -19,6 +20,8 @@ public class UserServiceImplTestOld {
     private Random random;
     @Mock
     private UserRepository<User> userRepository;
+    @Mock
+    private AuthoritiesRepository<User> authoritiesRepository;
     @InjectMocks
     private UserService<User> userService;
 
@@ -29,19 +32,19 @@ public class UserServiceImplTestOld {
         В дальнейшем его использовании мы будем имитировать его работу
         userRepository = Mockito.mock(UserRepositoryImpl.class);
          */
-        userService = new UserServiceImpl(userRepository, random);
+        userService = new UserServiceImpl(userRepository, authoritiesRepository, random);
         MockitoAnnotations.initMocks(this);
     }
 
     @Test(timeout = 200)
     public void shouldSetPasswordWithShifr() {
-        User user = new User("eights", "fifth");
+        User user = new User(1L, "eights", "fifth");
 
         /*
         Имитация работы метода save, при котором мы говорим, что пользватель
         успешно будет сохранен в базу данных, и вернется значение boolean - true
          */
-        Mockito.when(userRepository.save(user)).thenReturn(true);
+        Mockito.when(userRepository.save(user)).thenReturn(user);
 
         boolean save = userService.save(user);
 
