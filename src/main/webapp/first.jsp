@@ -8,8 +8,8 @@
 <body>
 ${users}
     <form action="registration" method="post">
-        <input type="hidden" name="username" value="${users.get(0).username}" />
-        <input type="text" name="phone" placeholder="insert your phone"/>
+        <input type="text" name="username" placeholder="Insert your username"/>
+        <input type="password" name="password" placeholder="Insert your password" />
         <input type="submit" name="submit"/>
     </form>
 </body>
