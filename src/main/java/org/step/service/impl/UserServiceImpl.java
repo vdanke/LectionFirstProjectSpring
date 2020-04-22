@@ -8,6 +8,7 @@ import org.step.service.AuthoritiesService;
 import org.step.service.UserService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class UserServiceImpl implements UserService<User>, AuthoritiesService<User> {
@@ -50,7 +51,16 @@ public class UserServiceImpl implements UserService<User>, AuthoritiesService<Us
 
     @Override
     public User findById(Long id) {
-        return null;
+        if (id == null || id == 0) {
+            throw new IllegalArgumentException("ID cannot be null");
+        }
+        Optional<User> userById = userRepository.findById(id);
+
+        if (userById.isPresent()) {
+            return userById.get();
+        } else {
+            throw new IllegalStateException("User not found");
+        }
     }
 
     @Override

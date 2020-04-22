@@ -4,4 +4,14 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+
+  <servlet>
+    <servlet-name>FirstServlet</servlet-name>
+    <servlet-class>org.step.controller.MainController</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>FirstServlet</servlet-name>
+    <url-pattern>/servlet</url-pattern>
+  </servlet-mapping>
 </web-app>

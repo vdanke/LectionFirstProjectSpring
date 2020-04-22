@@ -6,8 +6,11 @@
     <title>Main page</title>
 </head>
 <body>
-    Hello World!
-    <a href="servlet">Hello Servlet</a>
-    <a href="first.jsp">Go to submit page</a>
+${username}
+    <form action="save" method="post">
+        <input type="hidden" name="username" value="${username}" />
+        <input type="text" name="phone" placeholder="insert your phone"/>
+        <input type="submit" name="submit"/>
+    </form>
 </body>
 </html>
