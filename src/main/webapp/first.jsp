@@ -6,7 +6,7 @@
     <title>Main page</title>
 </head>
 <body>
-${username}
+${users}
     <form action="save" method="post">
         <input type="hidden" name="username" value="${username}" />
         <input type="text" name="phone" placeholder="insert your phone"/>

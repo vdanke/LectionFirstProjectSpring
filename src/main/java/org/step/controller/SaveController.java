@@ -1,13 +1,13 @@
 package org.step.controller;
 
+import org.step.util.URIParser;
+
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = "/save")
 public class SaveController extends HttpServlet {
 
     @Override
@@ -26,8 +26,8 @@ public class SaveController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         log("Method get");
-        String phone = req.getParameter("phone");
-        resp.getWriter().println(phone);
+        String param = URIParser.param(req);
+        resp.getWriter().println(param);
     }
 
     @Override

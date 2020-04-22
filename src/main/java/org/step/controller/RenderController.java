@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 
 @WebServlet(urlPatterns = "/render")
@@ -23,12 +24,12 @@ public class RenderController extends HttpServlet {
         UserRepository<User> userRepository = new UserRepositoryImpl();
         AuthoritiesRepository<User> authoritiesRepository = new UserRepositoryImpl();
         Random random = new Random();
+
         UserService<User> userService = new UserServiceImpl(userRepository, authoritiesRepository, random);
 
-        User byId = userService.findById(5L);
+        List<User> all = userService.findAll();
 
-        System.out.println(byId.getUsername());
-        req.setAttribute("username", byId.getUsername());
+        req.setAttribute("users", all);
 
         getServletContext().getRequestDispatcher("/first.jsp").forward(req, resp);
     }

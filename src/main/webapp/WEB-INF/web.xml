@@ -7,11 +7,11 @@
 
   <servlet>
     <servlet-name>FirstServlet</servlet-name>
-    <servlet-class>org.step.controller.MainController</servlet-class>
+    <servlet-class>org.step.controller.SaveController</servlet-class>
   </servlet>
 
   <servlet-mapping>
     <servlet-name>FirstServlet</servlet-name>
-    <url-pattern>/servlet</url-pattern>
+    <url-pattern>/save</url-pattern>
   </servlet-mapping>
 </web-app>

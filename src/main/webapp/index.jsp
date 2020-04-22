@@ -8,6 +8,6 @@
 <body>
     Hello World!
     <a href="servlet">Hello Servlet</a>
-    <a href="first.jsp">Go to submit page</a>
+    <a href="render">Go to submit page</a>
 </body>
 </html>
