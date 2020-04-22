@@ -7,7 +7,7 @@
 </head>
 <body>
     Hello World!
-    <a href="servlet">Hello Servlet</a>
-    <a href="render">Go to submit page</a>
+    <a href="test">To test</a>
+    <a href="registration">Go to submit page</a>
 </body>
 </html>

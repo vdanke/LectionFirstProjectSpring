@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class SaveController extends HttpServlet {
+public class TestController extends HttpServlet {
 
     @Override
     public void init() throws ServletException {

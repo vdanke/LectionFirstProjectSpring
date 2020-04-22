@@ -6,6 +6,7 @@ import org.step.repository.UserRepository;
 import org.step.repository.impl.UserRepositoryImpl;
 import org.step.service.UserService;
 import org.step.service.impl.UserServiceImpl;
+import org.step.util.URIParser;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,7 +17,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
-@WebServlet(urlPatterns = "/render")
+@WebServlet(urlPatterns = "/registration")
 public class RenderController extends HttpServlet {
 
     @Override
@@ -32,5 +33,10 @@ public class RenderController extends HttpServlet {
         req.setAttribute("users", all);
 
         getServletContext().getRequestDispatcher("/first.jsp").forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.getWriter().println(URIParser.param(req));
     }
 }

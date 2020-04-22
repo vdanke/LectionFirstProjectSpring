@@ -7,8 +7,8 @@
 </head>
 <body>
 ${users}
-    <form action="save" method="post">
-        <input type="hidden" name="username" value="${username}" />
+    <form action="registration" method="post">
+        <input type="hidden" name="username" value="${users.get(0).username}" />
         <input type="text" name="phone" placeholder="insert your phone"/>
         <input type="submit" name="submit"/>
     </form>
