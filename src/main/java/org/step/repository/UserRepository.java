@@ -17,4 +17,6 @@ public interface UserRepository<T extends User> {
     List<User> findAll();
 
     T update(T user);
+
+    Optional<T> login(T t);
 }

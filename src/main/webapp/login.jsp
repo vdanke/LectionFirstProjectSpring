@@ -7,11 +7,9 @@
 </head>
 <body>
 ${users}
-${value}
-    <form action="registration" method="post" enctype="multipart/form-data">
+    <form action="login" method="post">
         <input type="text" name="username" placeholder="Insert your username"/>
         <input type="password" name="password" placeholder="Insert your password" />
-        <input type="file" name="file-name" />
         <input type="submit" name="submit"/>
     </form>
 </body>

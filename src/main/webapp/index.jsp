@@ -6,8 +6,10 @@
     <title>Main page</title>
 </head>
 <body>
-    Hello World!
+${sessionCounter}
+Hello, ${sessionScope.username}!
     <a href="test">To test</a>
     <a href="registration">Go to submit page</a>
+    <a href="login">Go to login page</a>
 </body>
 </html>

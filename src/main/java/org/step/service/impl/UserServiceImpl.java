@@ -26,6 +26,21 @@ public class UserServiceImpl implements UserService<User>, AuthoritiesService<Us
     }
 
     @Override
+    public User login(User user) {
+        Optional<User> login = userRepository.login(user);
+
+        User userFromDB = login.orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        boolean isPasswordEqual = userFromDB.getPassword().equals(user.getPassword());
+
+        if (isPasswordEqual) {
+            return userFromDB;
+        } else {
+            throw new IllegalArgumentException("Password is not correct");
+        }
+    }
+
+    @Override
     public boolean save(User user) {
         final int thousand = 1000;
         int i = random.nextInt(thousand);
@@ -33,7 +48,7 @@ public class UserServiceImpl implements UserService<User>, AuthoritiesService<Us
         if (user == null) {
             throw new IllegalArgumentException("User is null");
         }
-        user.setPassword(user.getPassword() + "shifr" + i);
+        user.setPassword(user.getPassword());
 
         User afterSaving = userRepository.save(user);
 

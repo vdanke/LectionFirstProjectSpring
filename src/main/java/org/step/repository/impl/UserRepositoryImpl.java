@@ -20,12 +20,37 @@ public class UserRepositoryImpl implements UserRepository<User>, AuthoritiesRepo
     private static final String DELETE = "delete from users where user_id=?";
     private static final String UPDATE = "update users set username=?, password=? where user_id=?";
     private static final String UPDATE_ROLE = "insert into authorities(user_id,authorities) values(?,?)";
+    private static final String LOGIN = "select * from users where username=?";
 
     private static final String USER_ID = "user_id";
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
 
     private final ConnectionPool connectionPool = ConnectionPoolImpl.getInstance();
+
+    @Override
+    public Optional<User> login(User user) {
+        Connection connection = connectionPool.getConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(LOGIN);
+            preparedStatement.setString(1, user.getUsername());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                return Optional.of(new User(
+                        resultSet.getLong("user_id"),
+                        resultSet.getString("username"),
+                        resultSet.getString("password")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            connectionPool.rollbackTransaction(connection);
+        } finally {
+            connectionPool.releaseConnection(connection);
+        }
+        return Optional.empty();
+    }
 
     @Override
     public User save(User user) {

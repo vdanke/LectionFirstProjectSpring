@@ -9,16 +9,25 @@ import org.step.service.impl.UserServiceImpl;
 import org.step.util.URIParser;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Random;
+import javax.servlet.http.*;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.step.controller.RenderController.LOCATION;
 
 @WebServlet(urlPatterns = "/registration")
+@MultipartConfig(location = LOCATION)
 public class RenderController extends HttpServlet {
+
+    static final String LOCATION = "/home/vielen/IdeaProjects/LectionFirstProject/images/";
+
+    private UserRepository<User> userRepository= new UserRepositoryImpl();
+    private AuthoritiesRepository<User> authoritiesRepository = new UserRepositoryImpl();
+    private Random random = new Random();
+    private UserService<User> userService = new UserServiceImpl(userRepository, authoritiesRepository, random);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -32,11 +41,49 @@ public class RenderController extends HttpServlet {
 
         req.setAttribute("users", all);
 
+        Cookie[] cookies = req.getCookies();
+
+        Optional<Cookie> user = Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals("user"))
+                .findAny();
+
+        user.ifPresent(cookie -> req.setAttribute("value", cookie.getValue()));
+
         getServletContext().getRequestDispatcher("/first.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.getWriter().println(URIParser.param(req));
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+
+        User user = new User(username, password);
+
+//        Collection<Part> parts = req.getParts();
+//        for (Part part : parts) {
+//            boolean isTextField = part.getName().equals("username");
+//            if (isTextField) {
+//                InputStream inputStream = part.getInputStream();
+//                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+//                String usernameFromPartContent = new BufferedReader(inputStreamReader).lines().collect(Collectors.joining());
+//                user.setUsername(usernameFromPartContent);
+//            } else {
+//                part.write("my file" + part.getContentType() + ".jpeg");
+//            }
+//        }
+        File file = new File(LOCATION);
+        Part part = req.getPart("file-name");
+
+        if (!file.exists()) {
+            file.mkdir();
+        }
+
+        if (part.getContentType().contains("jpeg")) {
+            part.write("file_" + part.getName() + ".jpeg");
+        } else {
+            throw new IllegalArgumentException("Wrong file format");
+        }
+
+        userService.save(user);
     }
 }
