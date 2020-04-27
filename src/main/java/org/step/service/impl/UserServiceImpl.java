@@ -79,6 +79,16 @@ public class UserServiceImpl implements UserService<User>, AuthoritiesService<Us
     }
 
     @Override
+    public String getAuthority(Long id) {
+        userRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(String.format("User with ID %d not found", id)));
+
+        return authoritiesRepository.findAuthoritiesByUserId(id)
+                .orElse("Your role is unknown");
+    }
+
+    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }

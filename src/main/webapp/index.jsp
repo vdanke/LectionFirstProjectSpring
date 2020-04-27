@@ -7,7 +7,17 @@
 </head>
 <body>
 ${sessionCounter}
-Hello, ${sessionScope.username}!
+<c:if test="${sessionScope.user != null}">
+    Hello, ${sessionScope.user.username}!
+    <a href="${pageContext.request.contextPath}/cabinet?username=${sessionScope.user.username}"
+</c:if>
+<%
+    String strings = "first, second, third";
+    request.setAttribute("strings", strings);
+%>
+<c:forTokens items="${strings}" delims="," var="number">
+    ${number}
+</c:forTokens>
     <a href="test">To test</a>
     <a href="registration">Go to submit page</a>
     <a href="login">Go to login page</a>

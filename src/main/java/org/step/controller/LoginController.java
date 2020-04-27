@@ -39,8 +39,7 @@ public class LoginController extends HttpServlet {
 
         HttpSession session = req.getSession(true);
 
-        session.setAttribute("username", login.getUsername());
-        session.setMaxInactiveInterval(1800);
+        session.setAttribute("user", login);
 
         Cookie[] cookies = req.getCookies();
 

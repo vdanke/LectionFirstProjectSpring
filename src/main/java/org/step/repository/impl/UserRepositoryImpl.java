@@ -21,6 +21,7 @@ public class UserRepositoryImpl implements UserRepository<User>, AuthoritiesRepo
     private static final String UPDATE = "update users set username=?, password=? where user_id=?";
     private static final String UPDATE_ROLE = "insert into authorities(user_id,authorities) values(?,?)";
     private static final String LOGIN = "select * from users where username=?";
+    private static final String FIND_AUTHORITIES_BY_ID = "select * from authorities where user_id = ?";
 
     private static final String USER_ID = "user_id";
     private static final String USERNAME = "username";
@@ -196,6 +197,26 @@ public class UserRepositoryImpl implements UserRepository<User>, AuthoritiesRepo
             connectionPool.releaseConnection(connection);
         }
         return false;
+    }
+
+    @Override
+    public Optional<String> findAuthoritiesByUserId(Long id) {
+        Connection connection = connectionPool.getConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(FIND_AUTHORITIES_BY_ID);
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.ofNullable(resultSet.getString("authorities"));
+            }
+        } catch (Exception e) {
+            connectionPool.rollbackTransaction(connection);
+            e.printStackTrace();
+        } finally {
+            connectionPool.releaseConnection(connection);
+        }
+        return Optional.empty();
     }
 
     private User setUserFromDatabase(ResultSet resultSet) throws Exception {
