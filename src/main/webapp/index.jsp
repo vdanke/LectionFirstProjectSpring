@@ -7,19 +7,23 @@
 </head>
 <body>
 ${sessionCounter}
-<c:if test="${sessionScope.user != null}">
-    Hello, ${sessionScope.user.username}!
-    <a href="${pageContext.request.contextPath}/cabinet?username=${sessionScope.user.username}"
+<c:if test="${error != null}">
+    Error is happened ${error}
 </c:if>
-<%
-    String strings = "first, second, third";
-    request.setAttribute("strings", strings);
-%>
-<c:forTokens items="${strings}" delims="," var="number">
-    ${number}
-</c:forTokens>
-    <a href="test">To test</a>
-    <a href="registration">Go to submit page</a>
-    <a href="login">Go to login page</a>
+<c:if test="${sessionScope.user.role != null && sessionScope.user.role.toString().equals('ROLE_ADMIN')}">
+    <a href="${pageContext.request.contextPath}/users">Users</a>
+</c:if>
+<c:choose>
+    <c:when test="${sessionScope.user != null}">
+        Hello, ${sessionScope.user.username}!
+        <a href="${pageContext.request.contextPath}/cabinet?username=${sessionScope.user.username}">Cabinet</a>
+        <a href="${pageContext.request.contextPath}/logout">Logout</a>
+    </c:when>
+    <c:otherwise>
+        <a href="test">To test</a>
+        <a href="registration">Go to submit page</a>
+        <a href="login">Go to login page</a>
+    </c:otherwise>
+</c:choose>
 </body>
 </html>

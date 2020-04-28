@@ -12,12 +12,11 @@
     <title>Cabinet</title>
 </head>
 <body>
-<c:if test="${authority != null}">
-    Your authority is ${authority}
-</c:if>
 <c:choose>
-    <c:when test="${authority.equals('ROLE_USER')}">
+    <c:when test="${authority.equals('ROLE_USER') || authority.equals('ROLE_ADMIN')}">
         Everything is fine
+        <a href="${pageContext.request.contextPath}/logout">Logout</a>
+        <a href="index.jsp">Main page</a>
     </c:when>
     <c:otherwise>
         Something went wrong
@@ -32,5 +31,10 @@
     <div>
         Your password is: ${sessionScope.user.password}
     </div>
+<form action="${pageContext.request.contextPath}/update" method="post">
+    <input type="text" name="username" placeholder="Update your username"/>
+    <input type="password" name="password" placeholder="Update your password"/>
+    <input type="submit" value="Update">
+</form>
 </body>
 </html>

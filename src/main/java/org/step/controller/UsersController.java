@@ -11,14 +11,17 @@ import org.step.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
-@WebServlet(urlPatterns = "/login")
-public class LoginController extends HttpServlet {
+@WebServlet(urlPatterns = "/users")
+public class UsersController extends HttpServlet {
 
     private UserRepository<User> userRepository= new UserRepositoryImpl();
     private AuthoritiesRepository<User> authoritiesRepository = new UserRepositoryImpl();
@@ -28,34 +31,20 @@ public class LoginController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        getServletContext().getRequestDispatcher("/login.jsp").forward(req, resp);
-    }
+        HttpSession session = req.getSession();
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
+        User user = (User) session.getAttribute("user");
 
-        User user = new User(username, password);
+        Optional<User> optionalUser = Optional.ofNullable(user);
 
-        User login = userService.login(user);
-
-        String authority = authoritiesService.getAuthority(login.getId());
-        login.setRole(Role.valueOf(authority));
-
-        HttpSession session = req.getSession(true);
-
-        session.setAttribute("user", login);
-
-        Cookie[] cookies = req.getCookies();
-
-        if (cookies != null) {
-            Cookie cookie = new Cookie("user", login.getUsername());
-            cookie.setMaxAge(3600);
-
-            resp.addCookie(cookie);
+        if (!optionalUser.isPresent() || !user.getRole().equals(Role.ROLE_ADMIN)) {
+            resp.sendRedirect("/index.jsp");
+            return;
         }
+        List<User> all = userService.findAll();
 
-        resp.sendRedirect("/index.jsp");
+        req.setAttribute("users", all);
+
+        getServletContext().getRequestDispatcher("/users.jsp").forward(req, resp);
     }
 }

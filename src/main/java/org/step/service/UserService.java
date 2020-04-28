@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserService<T extends User> {
 
-    boolean save(T user);
+    boolean save(T user, boolean isAdmin);
 
     boolean delete(T user);
 

@@ -29,16 +29,6 @@ public class SubmitController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        UserRepository<User> userRepository = new UserRepositoryImpl();
-        AuthoritiesRepository<User> authoritiesRepository = new UserRepositoryImpl();
-        Random random = new Random();
-
-        UserService<User> userService = new UserServiceImpl(userRepository, authoritiesRepository, random);
-
-        List<User> all = userService.findAll();
-
-        req.setAttribute("users", all);
-
         Cookie[] cookies = req.getCookies();
 
         Optional<Cookie> user = Arrays.stream(cookies)
@@ -55,6 +45,16 @@ public class SubmitController extends HttpServlet {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
+        boolean isAdmin;
+
+        String role = req.getParameter("role");
+
+        if (role.equalsIgnoreCase("admin")) {
+            isAdmin = true;
+        } else {
+            isAdmin = false;
+        }
+
         User user = new User(username, password);
 
 //        Collection<Part> parts = req.getParts();
@@ -69,19 +69,19 @@ public class SubmitController extends HttpServlet {
 //                part.write("my file" + part.getContentType() + ".jpeg");
 //            }
 //        }
-        File file = new File(LOCATION);
-        Part part = req.getPart("file-name");
+//        File file = new File(LOCATION);
+//        Part part = req.getPart("file-name");
+//
+//        if (!file.exists()) {
+//            file.mkdir();
+//        }
+//
+//        if (part.getContentType().contains("jpeg")) {
+//            part.write("file_" + part.getName() + ".jpeg");
+//        } else {
+//            throw new IllegalArgumentException("Wrong file format");
+//        }
 
-        if (!file.exists()) {
-            file.mkdir();
-        }
-
-        if (part.getContentType().contains("jpeg")) {
-            part.write("file_" + part.getName() + ".jpeg");
-        } else {
-            throw new IllegalArgumentException("Wrong file format");
-        }
-
-        userService.save(user);
+        userService.save(user, isAdmin);
     }
 }

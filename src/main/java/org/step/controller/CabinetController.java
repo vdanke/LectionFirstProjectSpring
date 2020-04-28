@@ -13,10 +13,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Random;
 
-@WebServlet(urlPatterns = "/cabinet")
+@WebServlet(urlPatterns = {"/cabinet", "/update"})
 public class CabinetController extends HttpServlet {
 
     private UserRepository<User> userRepository= new UserRepositoryImpl();
@@ -29,13 +31,37 @@ public class CabinetController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession().getAttribute("user");
 
-        String authority = authoritiesService.getAuthority(user.getId());
+        Optional<User> userOptional = Optional.ofNullable(user);
+
+        if (!userOptional.isPresent()) {
+            resp.sendRedirect("/index.jsp");
+        } else {
+            String authority = authoritiesService.getAuthority(userOptional.get().getId());
+
+            String username = req.getParameter("username");
+
+            req.setAttribute("authority", authority);
+
+            getServletContext().getRequestDispatcher("/cabinet.jsp").forward(req, resp);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+
+        User user = (User) session.getAttribute("user");
 
         String username = req.getParameter("username");
-        System.out.println(username);
+        String password = req.getParameter("password");
 
-        req.setAttribute("authority", authority);
+        user.setUsername(username);
+        user.setPassword(password);
 
-        getServletContext().getRequestDispatcher("/cabinet.jsp").forward(req, resp);
+        User afterUpdate = userService.update(user);
+
+        session.setAttribute("user", afterUpdate);
+
+        resp.sendRedirect("/cabinet");
     }
 }

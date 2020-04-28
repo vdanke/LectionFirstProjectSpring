@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService<User>, AuthoritiesService<Us
     }
 
     @Override
-    public boolean save(User user) {
+    public boolean save(User user, boolean isAdmin) {
         final int thousand = 1000;
         int i = random.nextInt(thousand);
 
@@ -53,7 +53,11 @@ public class UserServiceImpl implements UserService<User>, AuthoritiesService<Us
         User afterSaving = userRepository.save(user);
 
         if (afterSaving.getId() != null && afterSaving.getId() != 0) {
-            afterSaving.setRole(Role.ROLE_USER);
+            if (isAdmin) {
+                afterSaving.setRole(Role.ROLE_ADMIN);
+            } else {
+                afterSaving.setRole(Role.ROLE_USER);
+            }
             return authoritiesRepository.saveAuthorities(afterSaving);
         }
         return false;
@@ -95,7 +99,11 @@ public class UserServiceImpl implements UserService<User>, AuthoritiesService<Us
 
     @Override
     public User update(User user) {
-        return null;
+        if (user.getId() != null) {
+            return userRepository.update(user);
+        } else {
+            throw new RuntimeException("User ID is null");
+        }
     }
 
     @Override
