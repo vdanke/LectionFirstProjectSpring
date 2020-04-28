@@ -6,7 +6,6 @@ import org.step.repository.UserRepository;
 import org.step.repository.impl.UserRepositoryImpl;
 import org.step.service.UserService;
 import org.step.service.impl.UserServiceImpl;
-import org.step.util.URIParser;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -14,13 +13,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static org.step.controller.RenderController.LOCATION;
+import static org.step.controller.SubmitController.LOCATION;
 
 @WebServlet(urlPatterns = "/registration")
 @MultipartConfig(location = LOCATION)
-public class RenderController extends HttpServlet {
+public class SubmitController extends HttpServlet {
 
     static final String LOCATION = "/home/vielen/IdeaProjects/LectionFirstProject/images/";
 
@@ -49,7 +47,7 @@ public class RenderController extends HttpServlet {
 
         user.ifPresent(cookie -> req.setAttribute("value", cookie.getValue()));
 
-        getServletContext().getRequestDispatcher("/first.jsp").forward(req, resp);
+        getServletContext().getRequestDispatcher("/submit.jsp").forward(req, resp);
     }
 
     @Override

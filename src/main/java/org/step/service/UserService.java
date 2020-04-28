@@ -17,6 +17,4 @@ public interface UserService<T extends User> {
     T update(T user);
 
     User login(User user);
-
-    String getAuthority(Long id);
 }
