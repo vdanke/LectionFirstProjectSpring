@@ -3,10 +3,13 @@ package org.step.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.Optional;
+import java.util.Random;
 
 @Configuration
 @ComponentScan(basePackages = {"org.step"})
@@ -31,6 +34,21 @@ public class DatabaseConfiguration {
 
         return dataSource;
     }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }
+
+    @Bean
+    public Random random() {
+        return new Random();
+    }
+
+    /*
+    @Autowired - проводим зависимости в бин (Set method, поле, конструктор)
+    @Qualifier - разрешаем спорные инжекты разных бинов с одним и тем же именем
+     */
 
     @Autowired
     public void setEnvironment(Environment environment) {

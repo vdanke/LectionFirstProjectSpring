@@ -1,5 +1,6 @@
 package org.step.service.impl;
 
+import org.springframework.stereotype.Service;
 import org.step.model.User;
 import org.step.repository.AuthoritiesRepository;
 import org.step.repository.UserRepository;
@@ -11,11 +12,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-public class UserServiceImpl implements UserService<User>, AuthoritiesService<User> {
+@Service
+public class UserServiceImpl implements UserService<User> {
 
-    private UserRepository<User> userRepository;
-    private AuthoritiesRepository<User> authoritiesRepository;
-    private Random random;
+    private final UserRepository<User> userRepository;
+    private final AuthoritiesRepository<User> authoritiesRepository;
+    private final Random random;
 
     public UserServiceImpl(UserRepository<User> userRepository,
                            AuthoritiesRepository<User> authoritiesRepository,

@@ -4,7 +4,7 @@ import org.step.model.User;
 
 import java.util.List;
 
-public interface UserService<T extends User> {
+public interface UserService<T extends User> extends AuthoritiesService<User> {
 
     boolean save(T user, boolean isAdmin);
 
