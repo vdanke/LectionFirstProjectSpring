@@ -1,7 +1,8 @@
 package org.step.repository.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.step.model.User;
-import org.step.repository.AuthoritiesRepository;
 import org.step.repository.UserRepository;
 import org.step.repository.pool.ConnectionPool;
 import org.step.repository.pool.ConnectionPoolImpl;
@@ -12,7 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserRepositoryImpl implements UserRepository<User>, AuthoritiesRepository<User> {
+@Repository
+public class UserRepositoryImpl implements UserRepository<User> {
 
     private static final String REGISTRATION = "insert into users(user_id,username,password) values(?,?,?)";
     private static final String FIND_ALL = "select * from users";
@@ -28,6 +30,12 @@ public class UserRepositoryImpl implements UserRepository<User>, AuthoritiesRepo
     private static final String PASSWORD = "password";
 
     private final ConnectionPool connectionPool = ConnectionPoolImpl.getInstance();
+    private final IdChecker idChecker;
+
+    @Autowired
+    public UserRepositoryImpl(IdChecker idChecker) {
+        this.idChecker = idChecker;
+    }
 
     @Override
     public Optional<User> login(User user) {
@@ -59,7 +67,7 @@ public class UserRepositoryImpl implements UserRepository<User>, AuthoritiesRepo
         Long nextId;
 
         try {
-            nextId = IdChecker.getNextId(connection);
+            nextId = idChecker.getNextId();
 
             PreparedStatement preparedStatement = connection.prepareStatement(REGISTRATION);
             preparedStatement.setLong(1, nextId);

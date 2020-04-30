@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository<T extends User> {
+public interface UserRepository<T extends User> extends AuthoritiesRepository<User> {
 
     T save(T user);
 

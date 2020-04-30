@@ -56,7 +56,7 @@ public class UserServiceImplTestSecond {
                 .thenReturn(true);
 
         // Вызываем реальный метод
-        boolean isSaved = userService.save(user);
+        boolean isSaved = userService.save(user, true);
 
         // Проверяем сколько раз был вызыван метод у Mock объекта
         Mockito.verify(userRepository, Mockito.times(1))
@@ -89,7 +89,7 @@ public class UserServiceImplTestSecond {
                 .thenReturn(user);
 
         // Вызываем реальный метод
-        boolean isSaved = userService.save(user);
+        boolean isSaved = userService.save(user, true);
 
         // Проверяем сколько раз был вызыван метод у Mock объекта
         Mockito.verify(userRepository, Mockito.times(1))
@@ -118,7 +118,7 @@ public class UserServiceImplTestSecond {
                 .thenReturn(passwordInteger);
 
         // Вызываем реальный метод
-        boolean isSaved = userService.save(null);
+        boolean isSaved = userService.save(null, true);
 
         // Проверяем сколько раз был вызыван метод у Mock объекта
         Mockito.verifyZeroInteractions(userRepository);

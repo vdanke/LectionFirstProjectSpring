@@ -46,7 +46,7 @@ public class UserServiceImplTestOld {
          */
         Mockito.when(userRepository.save(user)).thenReturn(user);
 
-        boolean save = userService.save(user);
+        boolean save = userService.save(user, true);
 
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
         Assert.assertTrue(save);
@@ -55,7 +55,7 @@ public class UserServiceImplTestOld {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowException() {
-        boolean save = userService.save(null);
+        boolean save = userService.save(null, true);
 
         Mockito.verify(userRepository, Mockito.never())
                 .save(Mockito.any(User.class));

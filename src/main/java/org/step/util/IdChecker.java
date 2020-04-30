@@ -1,31 +1,36 @@
 package org.step.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+@Component
 public class IdChecker {
 
-    private static final String ID_CHECKER = "select user_id from users";
-    private static final String USER_ID_FIELD = "user_id";
-    private static final long ID_START = 0;
+    private static final String ID_CHECKER = "SELECT MAX(user_id) FROM users";
 
-    public static Long getNextId(Connection connection) throws Exception {
-        List<Long> idList = new ArrayList<>();
+    private JdbcTemplate jdbcTemplate;
 
-        PreparedStatement preparedStatement = connection.prepareStatement(ID_CHECKER);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            idList.add(resultSet.getLong(USER_ID_FIELD));
-        }
+    public Long getNextId() {
+        long maxId;
 
-        long maxId = idList.stream()
-                .mapToLong(Long::longValue)
-                .max()
-                .orElse(ID_START);
+        maxId = Optional.ofNullable(
+                this.jdbcTemplate.queryForObject(ID_CHECKER, Long.class)
+        ).orElse(0L);
 
         return ++maxId;
+    }
+
+    @Autowired
+    public void setJdbcTemplate(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 }
