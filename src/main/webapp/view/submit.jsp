@@ -9,7 +9,7 @@
 <body>
 ${value}
 <a href="index.jsp">Main page</a>
-    <form action="registration" method="post" enctype="multipart/form-data">
+    <form action="submit" method="post" enctype="multipart/form-data">
         <input type="radio" name="role" value="user" checked="checked">User
         <input type="radio" name="role" value="admin">Admin
         <input type="text" name="username" placeholder="Insert your username"/>

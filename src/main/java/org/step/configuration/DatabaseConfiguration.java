@@ -18,9 +18,13 @@ import java.util.Random;
 })
 public class DatabaseConfiguration {
 
+    /*
+    Стартуер раньше Configuration и создается раньше
+     */
     private Environment environment;
 
     @Bean
+//    @Profile(value = {"dev", "test"})
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
 
@@ -29,7 +33,7 @@ public class DatabaseConfiguration {
                         .orElse("org.postgresql.Driver")
         );
         dataSource.setUrl(environment.getProperty("db.url"));
-        dataSource.setUsername(environment.getProperty("db.username"));
+        dataSource.setUsername(environment.getProperty("db.user"));
         dataSource.setPassword(environment.getProperty("db.password"));
 
         return dataSource;

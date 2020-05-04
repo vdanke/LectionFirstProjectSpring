@@ -16,12 +16,11 @@ ${sessionCounter}
 <c:choose>
     <c:when test="${sessionScope.user != null}">
         Hello, ${sessionScope.user.username}!
-        <a href="${pageContext.request.contextPath}/cabinet?username=${sessionScope.user.username}">Cabinet</a>
+        <a href="${pageContext.request.contextPath}/cabinet">Cabinet</a>
         <a href="${pageContext.request.contextPath}/logout">Logout</a>
     </c:when>
     <c:otherwise>
-        <a href="test">To test</a>
-        <a href="registration">Go to submit page</a>
+        <a href="submit">Go to submit page</a>
         <a href="login">Go to login page</a>
     </c:otherwise>
 </c:choose>

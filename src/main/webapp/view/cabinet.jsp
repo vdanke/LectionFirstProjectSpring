@@ -13,10 +13,10 @@
 </head>
 <body>
 <c:choose>
-    <c:when test="${authority.equals('ROLE_USER') || authority.equals('ROLE_ADMIN')}">
+    <c:when test="${sessionScope.user.role.toString().equals('ROLE_USER') || sessionScope.user.role.toString().equals('ROLE_ADMIN')}">
         Everything is fine
         <a href="${pageContext.request.contextPath}/logout">Logout</a>
-        <a href="index.jsp">Main page</a>
+        <a href="${pageContext.request.contextPath}/">Main page</a>
     </c:when>
     <c:otherwise>
         Something went wrong
@@ -31,7 +31,7 @@
     <div>
         Your password is: ${sessionScope.user.password}
     </div>
-<form action="${pageContext.request.contextPath}/update" method="post">
+<form action="${pageContext.request.contextPath}/update/${sessionScope.user.id}" method="post">
     <input type="text" name="username" placeholder="Update your username"/>
     <input type="password" name="password" placeholder="Update your password"/>
     <input type="submit" value="Update">

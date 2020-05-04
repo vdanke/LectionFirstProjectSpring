@@ -26,7 +26,7 @@ public class UserRepositoryImpl implements UserRepository<User> {
     private static final String UPDATE = "update users set username=?, password=? where user_id=?";
     private static final String UPDATE_ROLE = "insert into authorities(user_id,authorities) values(?,?)";
     private static final String LOGIN = "select * from users where username=:username and password=:password";
-    private static final String FIND_AUTHORITIES_BY_ID = "select * from authorities where user_id = ?";
+    private static final String FIND_AUTHORITIES_BY_ID = "select authorities from authorities where user_id = ?";
 
     private static final String USER_ID = "user_id";
     private static final String USERNAME = "username";

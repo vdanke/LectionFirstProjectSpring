@@ -6,7 +6,7 @@
     <title>Main page</title>
 </head>
 <body>
-${users}
+${value}
 <a href="index.jsp">Main page</a>
     <form action="login" method="post">
         <input type="text" name="username" placeholder="Insert your username"/>

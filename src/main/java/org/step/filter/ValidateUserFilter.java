@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/registration", "/update"})
+@WebFilter(urlPatterns = {"/submit", "/update"})
 public class ValidateUserFilter implements Filter {
 
     @Override

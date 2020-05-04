@@ -20,6 +20,7 @@
             <th>ID</th>
             <th>Username</th>
             <th>Password</th>
+            <th>Update</th>
         </tr>
         </thead>
         <c:forEach items="${users}" var="user">
@@ -28,6 +29,7 @@
                 <td>${user.id}</td>
                 <td>${user.username}</td>
                 <td>${user.password}</td>
+                <td><a href="/updating/${user.id}">To update user</a> </td>
             </tr>
             </tbody>
         </c:forEach>
