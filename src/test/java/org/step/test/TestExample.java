@@ -31,7 +31,7 @@ public class TestExample {
         random = Mockito.mock(Random.class);
         userRepository = Mockito.mock(UserRepositoryImpl.class);
 
-        userService = new UserServiceImpl(userRepository, authoritiesRepository, random);
+//        userService = new UserServiceImpl(userRepository, authoritiesRepository, random);
     }
 
     @Test

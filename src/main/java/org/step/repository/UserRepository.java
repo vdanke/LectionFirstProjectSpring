@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface UserRepository<T extends User> extends AuthoritiesRepository<User> {
 
+    Optional<T> findByUsername(String username);
+
     T save(T user);
 
     boolean delete(T user);

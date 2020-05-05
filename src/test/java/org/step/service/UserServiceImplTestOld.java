@@ -32,7 +32,7 @@ public class UserServiceImplTestOld {
         В дальнейшем его использовании мы будем имитировать его работу
         userRepository = Mockito.mock(UserRepositoryImpl.class);
          */
-        userService = new UserServiceImpl(userRepository, authoritiesRepository, random);
+//        userService = new UserServiceImpl(userRepository, authoritiesRepository, random);
         MockitoAnnotations.initMocks(this);
     }
 

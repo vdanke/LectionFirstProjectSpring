@@ -27,6 +27,7 @@ public class UserRepositoryImpl implements UserRepository<User> {
     private static final String UPDATE_ROLE = "insert into authorities(user_id,authorities) values(?,?)";
     private static final String LOGIN = "select * from users where username=:username and password=:password";
     private static final String FIND_AUTHORITIES_BY_ID = "select authorities from authorities where user_id = ?";
+    private static final String FIND_BY_USERNAME = "select * from users where username=?";
 
     private static final String USER_ID = "user_id";
     private static final String USERNAME = "username";
@@ -66,6 +67,15 @@ public class UserRepositoryImpl implements UserRepository<User> {
         return Optional.ofNullable(this.jdbcTemplate.queryForObject(
                 FIND_BY_ID,
                 new Object[]{id},
+                this::mapRow
+        ));
+    }
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        return Optional.ofNullable(this.jdbcTemplate.queryForObject(
+                FIND_BY_USERNAME,
+                new Object[]{username},
                 this::mapRow
         ));
     }

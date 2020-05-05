@@ -36,7 +36,7 @@ public class UserServiceImplTestSecond {
         userRepository = Mockito.init(UserRepositoryImpl.class);
         userService = new UserServiceImpl(userRepository);
          */
-        userService = new UserServiceImpl(userRepository, authoritiesRepository, random);
+//        userService = new UserServiceImpl(userRepository, authoritiesRepository, random);
         MockitoAnnotations.initMocks(this);
     }
 

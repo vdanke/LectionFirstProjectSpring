@@ -18,9 +18,13 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan("org.step")
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    /*
+    http://localhost:8888 + "/" (Отрисовка будет index.jsp)
+     */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("index");
+        registry.addViewController("/login").setViewName("login");
     }
 
     @Override

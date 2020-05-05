@@ -1,5 +1,7 @@
 package org.step.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.step.model.User;
 import org.step.repository.AuthoritiesRepository;
@@ -18,13 +20,17 @@ public class UserServiceImpl implements UserService<User> {
     private final UserRepository<User> userRepository;
     private final AuthoritiesRepository<User> authoritiesRepository;
     private final Random random;
+    private final PasswordEncoder passwordEncoder;
 
+    @Autowired
     public UserServiceImpl(UserRepository<User> userRepository,
                            AuthoritiesRepository<User> authoritiesRepository,
-                           Random random) {
+                           Random random,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.random = random;
         this.authoritiesRepository = authoritiesRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -44,13 +50,12 @@ public class UserServiceImpl implements UserService<User> {
 
     @Override
     public boolean save(User user, boolean isAdmin) {
-        final int thousand = 1000;
-        int i = random.nextInt(thousand);
-
         if (user == null) {
             throw new IllegalArgumentException("User is null");
         }
-        user.setPassword(user.getPassword());
+        String passwordAfterEncoding = passwordEncoder.encode(user.getPassword());
+
+        user.setPassword(passwordAfterEncoding);
 
         User afterSaving = userRepository.save(user);
 

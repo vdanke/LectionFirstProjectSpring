@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Controller
+//@RequestMapping("/home")
 public class MainController {
 
     private final UserService<User> userService;
@@ -62,24 +63,4 @@ public class MainController {
         return "index";
     }
 
-    @PostMapping("/login")
-    public String login(
-            HttpServletRequest request,
-            @RequestParam(name = "username") String username,
-            @RequestParam(name = "password") String password
-    ) {
-        User user = new User(username, password);
-
-        User afterLogin = userService.login(user);
-
-        String authority = authoritiesService.getAuthority(afterLogin.getId());
-
-        afterLogin.setRole(Role.valueOf(authority));
-
-        HttpSession session = request.getSession();
-
-        session.setAttribute("user", afterLogin);
-
-        return "index";
-    }
 }
