@@ -7,12 +7,13 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags"%>
 <html>
 <head>
     <title>Users</title>
 </head>
 <body>
-<a href="index.jsp">Main page</a>
+<a href="${pageContext.request.contextPath}/">Main page</a>
 <c:if test="${users != null}">
     <table>
         <thead>

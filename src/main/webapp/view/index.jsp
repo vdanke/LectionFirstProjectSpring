@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page isELIgnored = "false" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags"%>
 <html>
 <head>
     <title>Main page</title>
@@ -10,19 +11,17 @@ ${sessionCounter}
 <c:if test="${error != null}">
     Error is happened ${error}
 </c:if>
-<c:if test="${sessionScope.user.role != null && sessionScope.user.role.toString().equals('ROLE_ADMIN')}">
+<security:authorize access="hasRole('ADMIN')">
     <a href="${pageContext.request.contextPath}/users">Users</a>
-</c:if>
-<c:choose>
-    <c:when test="${sessionScope.user != null}">
-        Hello, ${sessionScope.user.username}!
-        <a href="${pageContext.request.contextPath}/cabinet">Cabinet</a>
-        <a href="${pageContext.request.contextPath}/logout">Logout</a>
-    </c:when>
-    <c:otherwise>
+</security:authorize>
+<security:authorize access="isAuthenticated()">
+    Hello, <security:authentication property="name"/>!
+    <a href="${pageContext.request.contextPath}/cabinet">Cabinet</a>
+    <a href="${pageContext.request.contextPath}/logout">Logout</a>
+</security:authorize>
+<security:authorize access="!isAuthenticated()">
         <a href="submit">Go to submit page</a>
         <a href="login">Go to login page</a>
-    </c:otherwise>
-</c:choose>
+</security:authorize>
 </body>
 </html>

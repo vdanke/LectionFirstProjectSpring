@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static org.step.util.URIConstantUtil.USERS_URI;
+
 @Configuration
 @EnableWebSecurity
 @ComponentScan(basePackages = {"org.step"})
@@ -37,6 +39,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/submit", "/login")
                 .permitAll()
+                .antMatchers(USERS_URI, "/updating/**")
+                .hasRole("ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()

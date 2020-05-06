@@ -10,6 +10,8 @@ import org.step.model.User;
 import org.step.repository.UserRepository;
 import org.step.util.IdChecker;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,6 +38,16 @@ public class UserRepositoryImpl implements UserRepository<User> {
     private IdChecker idChecker;
     private JdbcTemplate jdbcTemplate;
     private NamedParameterJdbcTemplate namedJdbcTemplate;
+
+    @PostConstruct
+    private void postConstruct() {
+        // Заполнение базы данных
+    }
+
+    @PreDestroy
+    private void preDestroy() {
+        // удаление всего с базы данных
+    }
 
     @Override
     public Optional<User> login(User user) {

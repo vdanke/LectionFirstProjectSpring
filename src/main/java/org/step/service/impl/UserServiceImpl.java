@@ -10,6 +10,8 @@ import org.step.security.Role;
 import org.step.service.AuthoritiesService;
 import org.step.service.UserService;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -107,6 +109,10 @@ public class UserServiceImpl implements UserService<User> {
     @Override
     public User update(User user) {
         if (user.getId() != null) {
+            String passwordAfterEncoding = passwordEncoder.encode(user.getPassword());
+
+            user.setPassword(passwordAfterEncoding);
+
             return userRepository.update(user);
         } else {
             throw new RuntimeException("User ID is null");

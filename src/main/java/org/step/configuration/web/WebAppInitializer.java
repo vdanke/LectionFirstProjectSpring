@@ -4,9 +4,12 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import org.step.configuration.DatabaseConfiguration;
 import org.step.filter.CharsetFilter;
 import org.step.filter.ValidateUserFilter;
+import org.step.listener.ProjectRequestListener;
+import org.step.listener.SessionCount;
 
 import javax.servlet.Filter;
 import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import java.io.File;
 
@@ -30,6 +33,12 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     @Override
     protected Filter[] getServletFilters() {
         return new Filter[]{new CharsetFilter(), new ValidateUserFilter()};
+    }
+
+    @Override
+    protected void registerContextLoaderListener(ServletContext servletContext) {
+        servletContext.addListener(ProjectRequestListener.class);
+        servletContext.addListener(SessionCount.class);
     }
 
     @Override
