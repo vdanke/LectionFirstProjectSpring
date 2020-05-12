@@ -8,9 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.step.model.User;
-import org.step.repository.AuthoritiesRepository;
 import org.step.repository.UserRepository;
-import org.step.service.impl.UserServiceImpl;
 
 import java.util.Random;
 
@@ -20,8 +18,6 @@ public class UserServiceImplTestOld {
     private Random random;
     @Mock
     private UserRepository<User> userRepository;
-    @Mock
-    private AuthoritiesRepository<User> authoritiesRepository;
     @InjectMocks
     private UserService<User> userService;
 

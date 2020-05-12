@@ -22,7 +22,7 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public static UserDetailsImpl create(User user) {
-        Set<GrantedAuthority> authorities = Collections.singleton(user.getRole());
+        Set<GrantedAuthority> authorities = user.getAuthorities();
 
         return new UserDetailsImpl(
                 user.getId(),

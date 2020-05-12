@@ -1,17 +1,52 @@
 package org.step.model;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.step.security.Role;
 
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
+@Entity
+@Table(name = "USERS")
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_SEQ")
+//    @SequenceGenerator(name = "USER_SEQ", sequenceName = "USER_SEQ_DB")
     private Long id;
+
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
+
+    @Column(name = "password", nullable = false, length = 1024)
     private String password;
-    private Role role;
+
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "AUTHORITIES", joinColumns = @JoinColumn(name = "USER_ID"))
+    @Enumerated(EnumType.STRING)
+    private Set<GrantedAuthority> authorities = new HashSet<>();
+
+    /*
+    @OneToOne
+    @ManyToMany
+     */
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL
+//            orphanRemoval = true
+    )
+    private List<Message> messageList;
 
     public User() {
+    }
+
+    public User(Long id, String username) {
+        this.username = username;
+        this.id = id;
     }
 
     public User(String username, String password) {
@@ -25,18 +60,14 @@ public class User {
         this.password = password;
     }
 
-    public User(String username, String password, Role role) {
+    public User(String username, String password, Set<GrantedAuthority> authorities) {
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.authorities = authorities;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
+    public Set<GrantedAuthority> getAuthorities() {
+        return authorities;
     }
 
     public Long getId() {
@@ -61,6 +92,18 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setAuthorities(Set<GrantedAuthority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public List<Message> getMessageList() {
+        return messageList;
+    }
+
+    public void setMessageList(List<Message> messageList) {
+        this.messageList = messageList;
     }
 
     @Override

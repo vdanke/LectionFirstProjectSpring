@@ -7,26 +7,34 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.step.model.Message;
 import org.step.model.User;
-import org.step.security.Role;
-import org.step.service.AuthoritiesService;
+import org.step.service.MessageService;
 import org.step.service.UserService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 //@RequestMapping("/home")
 public class MainController {
 
     private final UserService<User> userService;
-    private final AuthoritiesService<User> authoritiesService;
+    private final MessageService<Message> messageService;
 
     @Autowired
     public MainController(UserService<User> userService,
-                          AuthoritiesService<User> authoritiesService) {
+                          MessageService<Message> messageService) {
         this.userService = userService;
-        this.authoritiesService = authoritiesService;
+        this.messageService = messageService;
+    }
+
+    @GetMapping("/")
+    public String mainPage(Model model) {
+        List<Message> messageList = messageService.findAll();
+
+        model.addAttribute("messages", messageList);
+
+        return "index";
     }
 
     @GetMapping("/submit")

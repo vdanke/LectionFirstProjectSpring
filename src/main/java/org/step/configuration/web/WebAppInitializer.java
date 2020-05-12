@@ -32,7 +32,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
     @Override
     protected Filter[] getServletFilters() {
-        return new Filter[]{new CharsetFilter(), new ValidateUserFilter()};
+        return new Filter[]{new CharsetFilter()};
     }
 
     @Override

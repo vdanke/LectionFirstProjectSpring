@@ -11,7 +11,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.step.configuration.DatabaseConfiguration;
 import org.step.model.User;
-import org.step.repository.AuthoritiesRepository;
 import org.step.repository.UserRepository;
 
 import javax.sql.DataSource;
@@ -24,7 +23,6 @@ public class TestBeanConfigurationExisting {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private UserRepository<User> userRepository;
-    private AuthoritiesRepository<User> authoritiesRepository;
 
     @Before
     public void setup() {
@@ -36,17 +34,11 @@ public class TestBeanConfigurationExisting {
         Assertions.assertThat(dataSource).isNotNull();
         Assertions.assertThat(jdbcTemplate).isNotNull();
         Assertions.assertThat(userRepository).isNotNull();
-        Assertions.assertThat(authoritiesRepository).isNotNull();
     }
 
     @Autowired
     public void setUserRepository(UserRepository<User> userRepository) {
         this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setAuthoritiesRepository(AuthoritiesRepository<User> authoritiesRepository) {
-        this.authoritiesRepository = authoritiesRepository;
     }
 
     @Autowired

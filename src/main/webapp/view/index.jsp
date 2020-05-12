@@ -23,5 +23,10 @@ ${sessionCounter}
         <a href="submit">Go to submit page</a>
         <a href="login">Go to login page</a>
 </security:authorize>
+<c:forEach var="message" items="${messages}">
+    ${message.id}
+    ${message.description}
+    ${message.user.username}
+</c:forEach>
 </body>
 </html>

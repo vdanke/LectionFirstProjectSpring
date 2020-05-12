@@ -26,5 +26,9 @@
     <input type="password" name="password" placeholder="Update your password"/>
     <input type="submit" value="Update">
 </form>
+<form action="${pageContext.request.contextPath}/cabinet/message/save" method="post">
+    <input type="text" name="description" placeholder="Insert your message">
+    <input type="submit" value="Create">
+</form>
 </body>
 </html>

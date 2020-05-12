@@ -8,6 +8,7 @@ import org.step.model.User;
 import org.step.repository.impl.UserRepositoryImpl;
 import org.step.security.Role;
 
+import java.util.Collections;
 import java.util.List;
 
 @RunWith(JUnit4.class)
@@ -15,7 +16,6 @@ import java.util.List;
 public class UserRepositoryImplIT {
 
     private static UserRepository<User> userRepository;
-    private static AuthoritiesRepository<User> authoritiesRepository;
     private static List<User> userList;
     private static User user;
     private static Long idAfterSaving;
@@ -23,7 +23,6 @@ public class UserRepositoryImplIT {
     @BeforeClass
     public static void setup() {
         userRepository = new UserRepositoryImpl();
-        authoritiesRepository = new UserRepositoryImpl();
         user = new User("first", "first");
         User save = userRepository.save(user);
         user.setId(save.getId());
@@ -64,11 +63,7 @@ public class UserRepositoryImplIT {
         Long id = user.getId();
         User user = new User(id, "second", "second");
 
-        user.setRole(Role.ROLE_USER);
-
-        boolean isAuthoritiesSaved = authoritiesRepository.saveAuthorities(user);
-
-        Assert.assertTrue(isAuthoritiesSaved);
+        user.setAuthorities(Collections.singleton(Role.ROLE_USER));
     }
 
     @AfterClass

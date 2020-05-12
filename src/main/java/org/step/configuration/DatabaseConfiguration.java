@@ -1,21 +1,27 @@
 package org.step.configuration;
 
+import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Random;
 
 @Configuration
-@ComponentScan(basePackages = {"org.step"})
+@ComponentScan
 @PropertySources({
         @PropertySource("classpath:/db.properties")
 })
+@EnableTransactionManagement
 public class DatabaseConfiguration {
 
     /*
@@ -40,19 +46,47 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
+        LocalContainerEntityManagerFactoryBean embFactory = new LocalContainerEntityManagerFactoryBean();
+
+        embFactory.setDataSource(dataSource);
+        embFactory.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+        embFactory.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        embFactory.setJpaProperties(jpaProperties());
+        embFactory.setPackagesToScan("org.step");
+
+        return embFactory;
     }
 
     @Bean
-    public Random random() {
-        return new Random();
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslator() {
+        return new PersistenceExceptionTranslationPostProcessor();
+    }
+
+    @Bean
+    public JpaTransactionManager transactionManager(DataSource dataSource) {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+
+        transactionManager.setEntityManagerFactory(entityManagerFactory(dataSource).getObject());
+
+        return transactionManager;
     }
 
     /*
     @Autowired - проводим зависимости в бин (Set method, поле, конструктор)
     @Qualifier - разрешаем спорные инжекты разных бинов с одним и тем же именем
      */
+
+    private Properties jpaProperties() {
+
+        Properties jpaProperties = new Properties();
+
+        jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        jpaProperties.setProperty("hibernate.hbm2ddl.auto", "update");
+        jpaProperties.setProperty("hibernate.show_sql", "true");
+
+        return jpaProperties;
+    }
 
     @Autowired
     public void setEnvironment(Environment environment) {

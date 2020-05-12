@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.step.model.User;
 import org.step.model.UserDetailsImpl;
-import org.step.security.Role;
-import org.step.service.AuthoritiesService;
 import org.step.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,13 +23,10 @@ import static org.step.util.URIConstantUtil.USERS_URI;
 public class UserController {
 
     private final UserService<User> userService;
-    private final AuthoritiesService<User> authoritiesService;
 
     @Autowired
-    public UserController(UserService<User> userService,
-                          AuthoritiesService<User> authoritiesService) {
+    public UserController(UserService<User> userService) {
         this.userService = userService;
-        this.authoritiesService = authoritiesService;
     }
 
     @GetMapping("/cabinet")
@@ -95,11 +90,8 @@ public class UserController {
     ) {
         User byId = userService.findById(id);
 
-        String authority = authoritiesService.getAuthority(byId.getId());
-
         byId.setUsername(username);
         byId.setPassword(password);
-        byId.setRole(Role.valueOf(authority));
 
         userService.update(byId);
 

@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository<T extends User> extends AuthoritiesRepository<User> {
+public interface UserRepository<T extends User> {
 
     Optional<T> findByUsername(String username);
 
@@ -19,6 +19,4 @@ public interface UserRepository<T extends User> extends AuthoritiesRepository<Us
     List<User> findAll();
 
     T update(T user);
-
-    Optional<T> login(T t);
 }

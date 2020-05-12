@@ -9,12 +9,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.step.model.User;
-import org.step.repository.AuthoritiesRepository;
 import org.step.repository.UserRepository;
 import org.step.security.Role;
-import org.step.service.impl.UserServiceImpl;
 
-import java.util.Optional;
 import java.util.Random;
 
 public class UserServiceImplTestSecond {
@@ -23,8 +20,6 @@ public class UserServiceImplTestSecond {
     private Random random;
     @Mock
     private UserRepository<User> userRepository;
-    @Mock
-    private AuthoritiesRepository<User> authoritiesRepository;
     @InjectMocks
     private UserService<User> userService;
 
@@ -52,8 +47,6 @@ public class UserServiceImplTestSecond {
                 .thenReturn(passwordInteger);
         Mockito.when(userRepository.save(user))
                 .thenReturn(user);
-        Mockito.when(authoritiesRepository.saveAuthorities(user))
-                .thenReturn(true);
 
         // Вызываем реальный метод
         boolean isSaved = userService.save(user, true);
@@ -61,14 +54,12 @@ public class UserServiceImplTestSecond {
         // Проверяем сколько раз был вызыван метод у Mock объекта
         Mockito.verify(userRepository, Mockito.times(1))
                 .save(user);
-        Mockito.verify(authoritiesRepository, Mockito.times(1))
-                .saveAuthorities(user);
         Mockito.verify(random, Mockito.times(1))
                 .nextInt(Mockito.anyInt());
 
         // Проверяем полученные данные в методе (тестируем логику)
         Assert.assertTrue(isSaved);
-        Assert.assertEquals(Role.ROLE_USER, user.getRole());
+        Assert.assertEquals(Role.ROLE_USER, user.getAuthorities());
         Assertions.assertThat(user).isNotNull();
         Assertions.assertThat(user.getPassword())
                 .startsWith("sec")
@@ -94,13 +85,12 @@ public class UserServiceImplTestSecond {
         // Проверяем сколько раз был вызыван метод у Mock объекта
         Mockito.verify(userRepository, Mockito.times(1))
                 .save(user);
-        Mockito.verifyZeroInteractions(authoritiesRepository);
         Mockito.verify(random, Mockito.times(1))
                 .nextInt(Mockito.anyInt());
 
         // Проверяем полученные данные в методе (тестируем логику)
         Assert.assertFalse(isSaved);
-        Assert.assertNull(user.getRole());
+        Assert.assertNull(user.getAuthorities());
         Assert.assertNull(user.getId());
         Assertions.assertThat(user).isNotNull();
         Assertions.assertThat(user.getPassword())
