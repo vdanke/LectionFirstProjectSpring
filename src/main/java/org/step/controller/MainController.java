@@ -1,5 +1,6 @@
 package org.step.controller;
 
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,11 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.step.dto.MessageDTO;
 import org.step.model.Message;
 import org.step.model.User;
 import org.step.service.MessageService;
 import org.step.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -30,7 +33,7 @@ public class MainController {
 
     @GetMapping("/")
     public String mainPage(Model model) {
-        List<Message> messageList = messageService.findAll();
+        val messageList = messageService.findAll();
 
         model.addAttribute("messages", messageList);
 
@@ -59,7 +62,7 @@ public class MainController {
             @RequestParam(name = "password") String password,
             @RequestParam(name = "role", required = false, defaultValue = "user") String role
     ) {
-        User user = new User(username, password);
+        val user = User.field(username, password);
 
         boolean isAdmin = false;
 

@@ -23,7 +23,7 @@ public class UserRepositoryImplIT {
     @BeforeClass
     public static void setup() {
         userRepository = new UserRepositoryImpl();
-        user = new User("first", "first");
+        user = User.field("first", "first");
         User save = userRepository.save(user);
         user.setId(save.getId());
         userList = userRepository.findAll();
@@ -45,7 +45,7 @@ public class UserRepositoryImplIT {
 
     @Test
     public void shouldSaveUserToDatabase() {
-        User user = new User("second", "second");
+        User user = User.field("second", "second");
 
         User afterSaving = userRepository.save(user);
 

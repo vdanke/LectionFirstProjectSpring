@@ -1,5 +1,6 @@
 package org.step.controller;
 
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +23,8 @@ import static org.step.util.URIConstantUtil.USERS_URI;
 @Controller
 public class UserController {
 
+//    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserController.class);
+
     private final UserService<User> userService;
 
     @Autowired
@@ -38,7 +41,7 @@ public class UserController {
 
     @GetMapping("/updating/{id}")
     public String getUserUpdatingPage(
-            @PathVariable(name = "id") Long id,
+            @NonNull @PathVariable(name = "id") Long id,
             Model model
     ) {
         User user = userService.findById(id);
