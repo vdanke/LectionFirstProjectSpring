@@ -15,4 +15,6 @@ public interface UserService<T extends User> {
     List<User> findAll();
 
     T update(T user);
+
+    T findByUsername(String username);
 }

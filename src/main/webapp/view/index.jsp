@@ -27,6 +27,13 @@ ${sessionCounter}
     ${message.id}
     ${message.description}
     ${message.user.username}
+    <security:authorize access="isAuthenticated()">
+        <a href="/messages/${message.id}/comments">Comments</a>
+        <form method="post" action="/messages/${message.id}/comments/save">
+            <input type="text" name="description" placeholder="Insert new comment">
+            <input type="submit" value="Create">
+        </form>
+    </security:authorize>
 </c:forEach>
 </body>
 </html>

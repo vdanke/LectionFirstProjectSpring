@@ -11,4 +11,6 @@ public interface MessageService<T extends Message> {
     boolean delete(T t);
 
     List<T> findAll();
+
+    T findById(Long id);
 }

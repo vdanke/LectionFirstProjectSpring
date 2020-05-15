@@ -1,30 +1,43 @@
 package org.step.model;
 
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.security.core.GrantedAuthority;
 import org.step.security.Role;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
+
+import static org.step.model.User.USER_MESSAGE_LIST_QUERY;
+import static org.step.model.User.USER_UPDATE_PASSWORD;
 
 @Entity
 @Table(name = "USERS")
 //@BatchSize(size = 100)
-//@NamedEntityGraph(name = "message_list", attributeNodes = {
-//        @NamedAttributeNode("messageList"),
+@NamedQueries({
+        @NamedQuery(
+                name = USER_UPDATE_PASSWORD,
+                query = "update User u set u.password=?1",
+                lockMode = LockModeType.NONE
+//                hints = {
+//                        @QueryHint(name = "", value = )
+//                }
+        )
+})
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                query = "SELECT * FROM USERS", resultClass = User.class, name = "User.allUsers"
+        )
+})
+@NamedEntityGraph(name = USER_MESSAGE_LIST_QUERY, attributeNodes = {
+        @NamedAttributeNode("messageList")
 //        @NamedAttributeNode(value = "messageList", subgraph = "user_message")
-//},
+})
 //subgraphs = {
 //        @NamedSubgraph(name = "user_message", attributeNodes = {
 //                @NamedAttributeNode("user")
 //        })
-//})
 @Getter
 @Setter
 @ToString(of = {"id", "username"})
@@ -36,6 +49,11 @@ import java.util.Set;
 //@DynamicUpdate
 //@DynamicInsert
 public class User {
+
+    @Transient
+    public static final String USER_MESSAGE_LIST_QUERY = "User.messageList";
+    @Transient
+    public static final String USER_UPDATE_PASSWORD = "User.updatePassword";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,6 +89,9 @@ public class User {
     )
     @Singular(value = "message")
     private List<Message> messageList;
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> commentList;
 
     public User(Long id, String username) {
         this.username = username;

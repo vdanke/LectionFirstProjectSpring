@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -16,7 +17,9 @@ import org.step.configuration.web.WebAppInitializer;
 import org.step.configuration.web.WebMvcConfig;
 import org.step.model.Message;
 import org.step.model.User;
+import org.step.repository.MessageRepositorySpringData;
 import org.step.repository.UserRepository;
+import org.step.repository.UserRepositorySpringData;
 
 import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
@@ -34,6 +37,8 @@ import java.util.Optional;
 public class TestBeanConfigurationExisting {
 
     private UserRepository<User> userRepository;
+    private UserRepositorySpringData userRepositorySpringData;
+    private MessageRepositorySpringData messageRepositorySpringData;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -81,6 +86,83 @@ public class TestBeanConfigurationExisting {
 //        Message message = messageList.get(0);
 //
 //        System.out.println(message.getDescription());
+    }
+
+    @Test
+    public void test2() {
+//        List<User> allUsers = entityManager.createQuery("select u from User u", User.class)
+//                .getResultList();
+
+        List<User> allUsers = userRepositorySpringData.findAll();
+
+        Assert.assertNotNull(allUsers);
+        Assert.assertFalse(allUsers.isEmpty());
+    }
+
+    @Test
+    public void test3() {
+//        User user = entityManager.find(User.class, 1L);
+
+        User user = userRepositorySpringData.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Assert.assertNotNull(user);
+        Assert.assertEquals(Long.valueOf(1), user.getId());
+    }
+
+    @Test
+    public void test4() {
+        List<Message> messageList = messageRepositorySpringData.findAllByUser_Id(1L);
+
+        Assert.assertNotNull(messageList);
+        Assert.assertFalse(messageList.get(0).getDescription().isEmpty());
+    }
+
+    @Test
+    public void test5() {
+        User user = userRepositorySpringData.findByUsername("user");
+
+        List<Message> messageList = user.getMessageList();
+
+        Assert.assertNotNull(messageList);
+        Assert.assertFalse(messageList.get(0).getDescription().isEmpty());
+    }
+
+    @Test
+    public void test6() {
+        List<User> er = userRepositorySpringData.findAllByUsernameContains("er");
+
+        Pageable pageable = PageRequest.of(0, 20);
+
+        PageImpl<User> users = new PageImpl<>(er, pageable, er.size());
+
+//        List<Object[]> er1 = userRepositorySpringData.findByAsArraySort("er", Sort.by("LENGTH(username)"));
+
+        er.forEach(user -> System.out.println(user.getUsername()));
+    }
+
+    public void test7() {
+        ExampleMatcher userMatcher = ExampleMatcher
+                .matching()
+                .withMatcher("username", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+
+        User user = User.builder()
+                .username("er")
+                .build();
+
+        Example<User> userExample = Example.of(user, userMatcher);
+
+        List<User> userList = userRepositorySpringData.findAll(userExample);
+    }
+
+    @Autowired
+    public void setMessageRepositorySpringData(MessageRepositorySpringData messageRepositorySpringData) {
+        this.messageRepositorySpringData = messageRepositorySpringData;
+    }
+
+    @Autowired
+    public void setUserRepositorySpringData(UserRepositorySpringData userRepositorySpringData) {
+        this.userRepositorySpringData = userRepositorySpringData;
     }
 
     @Autowired

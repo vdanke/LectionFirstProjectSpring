@@ -5,8 +5,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.step.configuration.exception.NotFoundException;
 import org.step.model.User;
 import org.step.repository.UserRepository;
+import org.step.repository.UserRepositorySpringData;
 import org.step.security.Role;
 import org.step.service.UserService;
 
@@ -19,12 +21,15 @@ public class UserServiceImpl implements UserService<User> {
 
     private final UserRepository<User> userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserRepositorySpringData userRepositorySpringData;
 
     @Autowired
     public UserServiceImpl(UserRepository<User> userRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder,
+                           UserRepositorySpringData userRepositorySpringData) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userRepositorySpringData = userRepositorySpringData;
     }
 
     @Override
@@ -81,5 +86,11 @@ public class UserServiceImpl implements UserService<User> {
         } else {
             throw new RuntimeException("User ID is null");
         }
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        return userRepositorySpringData.findByUsernameCustom(username)
+                .orElseThrow(() -> new NotFoundException(String.format("User with username %s not found", username)));
     }
 }
